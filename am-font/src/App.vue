@@ -1,9 +1,11 @@
 <template>
   <div>
-    欢迎使用公寓管理系统前台
+    <router-view></router-view>
   </div>
 </template>
 
 <script setup>
-
+import { useRouter } from 'vue-router';
+const router = useRouter();
+router.push("/home");
 </script>

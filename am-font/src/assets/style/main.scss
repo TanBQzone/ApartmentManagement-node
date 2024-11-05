@@ -1,0 +1,13 @@
+@use "./app" as *;
+@use "./el-ui" as *;
+@use "./element-plus" as *;
+@use "./reset" as *;
+@use "./variables" as *;
+
+:root {
+    --primary-color: #259c2d;
+    --primary-color-dark: #1b7121;
+    --primary-color-bg: #259c2d22;
+    --gray-color: #4a4a4a;
+    --border-color: #ddd;
+}
