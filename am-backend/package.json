@@ -1,0 +1,20 @@
+{
+  "name": "rm-backend",
+  "version": "1.0.0",
+  "author": "TanBQ.",
+  "description": "公寓管理系统的后端部分",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "keywords": [],
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "express": "^4.21.1",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
+  }
+}
