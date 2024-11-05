@@ -13,20 +13,19 @@ const router = express.Router();
 
 // 定义路由
 // 获取所有用户
-router.get('/users', userController.getAllUsers);
+router.get('/users/listAll', userController.getAllUsers);
 // 添加用户
-router.post('/users', userController.addUser);
+router.post('/users/addUser', userController.addUser);
 // 根据ID删除用户
 router.delete('/users/:id', userController.deleteUserById);
 // 根据ID更新用户信息
 router.put('/users/:id', userController.updateUserById);
 // 根据ID获取用户信息
-router.get('/getUserByID/:id', userController.getUserById);
+router.get('/users/getUserByID/:id', userController.getUserById);
 // 根据姓名获取用户信息
-router.get('/getUserByName/:name', userController.getUserByName);
+router.get('/users/getUserByName/:name', userController.getUserByName);
 // 登录
 router.post('/login', userController.login);
-
 
 // 导出路由
 module.exports = router;

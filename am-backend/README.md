@@ -431,20 +431,19 @@ const router = express.Router();
 
 // 定义路由
 // 获取所有用户
-router.get('/users', userController.getAllUsers);
+router.get('/users/listAll', userController.getAllUsers);
 // 添加用户
-router.post('/users', userController.addUser);
+router.post('/users/addUser', userController.addUser);
 // 根据ID删除用户
 router.delete('/users/:id', userController.deleteUserById);
 // 根据ID更新用户信息
 router.put('/users/:id', userController.updateUserById);
 // 根据ID获取用户信息
-router.get('/getUserByID/:id', userController.getUserById);
+router.get('/users/getUserByID/:id', userController.getUserById);
 // 根据姓名获取用户信息
-router.get('/getUserByName/:name', userController.getUserByName);
+router.get('/users/getUserByName/:name', userController.getUserByName);
 // 登录
 router.post('/login', userController.login);
-
 
 // 导出路由
 module.exports = router;
@@ -570,4 +569,5 @@ ignore: 指定要忽略的文件或目录。
 # 后端日志
 ```
 1. beta1.0.1 -- 24w45a || 创建项目结构以及登录接口的完成
+2. beta1.0.2 -- 24w45b || 修复了一些BUG，完善了部分逻辑
 ```

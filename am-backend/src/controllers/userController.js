@@ -148,12 +148,15 @@ const userController = {
             if (!isMatch) {
                 return res.status(401).send({ message: '用户或密码错误' });
             }
+            
+            // 判断账号类别，如果公寓id是0，就是超级管理员
+            const isAdmin = result[0].apartment_id === 0 ? true : false;
 
             // 登录成功
             res.json({
                 message: "登录成功",
                 isLogin: true,
-                user: { id: result[0].id, username: result[0].username } // 返回用户信息
+                user: { id: result[0].id, username: result[0].username, isAdmin } // 返回用户信息
             });
         });
     }

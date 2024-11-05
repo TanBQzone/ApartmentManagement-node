@@ -12,7 +12,7 @@ const User = {
      * @param {function} callback - 回调函数
      */
     getAllUsers: (callback) => {
-        db.query('SELECT * FROM users', callback);
+        db.query('SELECT id, username, phone_number, apartment_id, created_at FROM users where apartment_id != 0', callback);
     },
     
     /**
