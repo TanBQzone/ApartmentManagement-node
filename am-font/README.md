@@ -12,4 +12,4 @@ CSS 部分引用了[art-design-pro](https://github.com/Daymychen/art-design-pro)
 # 前端日志
 ```
 1. beta1.0.1 -- 24w45a || 项目的主体结构、登录注册页面、用户管理页
-```
+1. beta1.0.2 -- 24w45b || 修复编辑信息、修改密码之后出现的潜在问题

@@ -11,8 +11,12 @@ import router from './routes/index'
 // 引入css
 import './assets/style/main.scss'
 
+// 异常报错组件
+import Exception from './components/Exception/index.vue'
+
 const app = createApp(App);
 
+app.component('Exception', Exception)
 app.use(ElementPlus);
 app.use(router);
 app.mount('#app');

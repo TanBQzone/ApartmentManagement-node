@@ -42,7 +42,19 @@ const routes = [
     path: '/login',
     name: 'login',
     component: () => import('@/views/Login.vue')
-  }
+  },
+  {
+    path: '/403',
+    component: () => import('@/views/error/403.vue')
+  },
+  {
+    path: '/404',
+    component: () => import('@/views/error/404.vue')
+  },
+  {
+    path: '/500',
+    component: () => import('@/views/error/500.vue')
+  },
 ];
 
 const router = createRouter({
@@ -53,9 +65,15 @@ const router = createRouter({
 // 拦截器，如果没有登录，自动跳转到登录页面，在页面的一开始
 router.beforeEach((to, from, next) => {
   // console.log(to, from);
-  
+
   const token = localStorage.getItem('AM-ISLOGIN');
+  // const isAdmin = JSON.parse(localStorage.getItem("AM-Account")).isAdmin;
   const requiresAuth = to.path !== '/login'; // 检查是否需要登录
+  const adminPage = ['/home/account', '/home/apartment', '/home/income']; // 只能管理员查看的页面
+
+  // if (adminPage.includes(to.path) && !isAdmin) {
+  //   next({ path: '/403' });
+  // }
 
   if (requiresAuth && !token) {
     next({ path: '/login' });

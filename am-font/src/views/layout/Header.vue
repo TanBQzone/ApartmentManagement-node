@@ -15,7 +15,7 @@
             </div>
         </div>
         <div class="account" @click="showAccountMenu = !showAccountMenu">
-            <div class="icon"></div>
+            <img :src="avatar" class="icon">
             <div class="menu" v-if="showAccountMenu">
                 <span>账号管理</span>
                 <p @click="editAccount">修改账号</p>
@@ -28,11 +28,16 @@
 <script setup>
 import { defineEmits, onMounted, ref } from 'vue';
 import LOGO from "@/assets/logo.svg";
+import avatar from "@/assets/img/avatar.png";
 
 const lib = ref([]);
 const currentIndex = ref(0);
 const showAccountMenu = ref(false);
 
+/**
+ * 初始化选择库
+ * 根据用户类型设置选择库的内容
+ */
 const initSelectionLib = () => {
     let account = JSON.parse(localStorage.getItem("AM-Account"));
     console.log(account);
@@ -71,15 +76,27 @@ const initSelectionLib = () => {
 
 import { useRouter } from 'vue-router';
 const router = useRouter();
+
+/**
+ * 显示指定页面
+ * @param {string} url - 要跳转到的页面的URL
+ * @param {number} index - 当前页面的索引
+ */
 const showPage = (url, index) => {
     currentIndex.value = index;
     router.push(url);
 }
 
+/**
+ * 编辑账号信息
+ */
 const editAccount = () => {
     console.log("修改账号信息");
 }
 
+/**
+ * 登出操作
+ */
 const logout = () => {
     console.log("登出");
     localStorage.removeItem("AM-ISLOGIN");
@@ -89,13 +106,13 @@ const logout = () => {
 
 onMounted(() => {
     initSelectionLib();
-    // Set initial index based on current route
+    // 根据当前路由设置初始索引
     const currentPath = router.currentRoute.value.path;
     const index = lib.value.findIndex(item => item.url === currentPath);
     if (index !== -1) {
         currentIndex.value = index;
     }
-    router.push("/home/account");
+    router.push(lib.value[0].url);
 });
 </script>
 
@@ -192,7 +209,8 @@ onMounted(() => {
             width: 160px;
             height: fit-content;
             z-index: 2;
-            background-color: var(--primary-color-bg);
+            background-color: #f5f5f5;
+            box-shadow: 0 0 20px 0 #1d1d1d1d;
             border-radius: 30px;
 
             p {

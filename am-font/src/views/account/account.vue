@@ -17,7 +17,7 @@
                 </el-table-column>
                 <el-table-column align="center" prop="operation" label="操作" width="300">
                     <template #default="{ row }">
-                        <!-- <el-button plain type="success" size="small" @click="changePassword(row)">修改密码</el-button> -->
+                        <el-button plain type="success" size="small" @click="changePassword(row)">修改密码</el-button>
                         <el-button plain type="warning" size="small" @click="editUser(row)">编辑</el-button>
                         <el-button plain type="danger" size="small" @click="deleteUser(row.id)">删除</el-button>
                     </template>
@@ -71,12 +71,16 @@
 </template>
 
 <script setup>
-import { getAllUserData, addUserData, deleteUserDataById, updateUserDataById, getUserDataById } from "@/api/account";
+import { getAllUserData, addUserData, deleteUserDataById, updateUserByIdNoPassword, updateUserPasswordByIdAdmin, updateUserPasswordByIdNoAdmin } from "@/api/account";
 import { onMounted, ref } from "vue";
 import { ElMessage, ElMessageBox } from 'element-plus';
 
 // 表格数据
 const userData = ref([]);
+/**
+ * 初始化用户数据
+ * 从API获取所有用户数据，并更新userData
+ */
 const initData = () => {
     getAllUserData().then(res => {
         userData.value = res;
@@ -99,7 +103,10 @@ const pwdForm = ref({
     confirmPassword: ''
 });
 
-// 重置表单
+/**
+ * 重置用户表单
+ * 清空userForm中的所有字段
+ */
 const resetForm = () => {
     userForm.value = {
         username: '',
@@ -109,20 +116,29 @@ const resetForm = () => {
     };
 };
 
-// 新增用户
+/**
+ * 打开新增用户对话框
+ * 设置对话框标题为“新增用户”，并显示对话框
+ */
 const addUser = () => {
     dialogTitle.value = '新增用户';
     dialogVisible.value = true;
 };
 
-// 编辑用户
+/**
+ * 打开编辑用户对话框
+ * 设置对话框标题为“编辑用户”，并将当前行的数据填充到userForm中，显示对话框
+ */
 const editUser = (row) => {
     dialogTitle.value = '编辑用户';
     userForm.value = { ...row };
     dialogVisible.value = true;
 };
 
-// 删除用户
+/**
+ * 删除用户
+ * 弹出确认框，确认后删除指定ID的用户，并刷新用户数据
+ */
 const deleteUser = (id) => {
     ElMessageBox.confirm('确定要删除该用户吗？', '提示', {
         confirmButtonText: '确定',
@@ -138,10 +154,12 @@ const deleteUser = (id) => {
     });
 };
 
-// 修改密码
+/**
+ * 打开修改密码对话框
+ * 将当前行的数据填充到pwdForm中，并显示对话框
+ */
 const changePassword = (row) => {
     pwdForm.value = {
-        ...row,
         newPassword: '',
         confirmPassword: ''
     }
@@ -149,7 +167,10 @@ const changePassword = (row) => {
     pwdForm.value.id = row.id;
 };
 
-// 提交表单
+/**
+ * 提交用户表单
+ * 根据对话框标题判断是新增用户还是编辑用户，并调用相应的API进行数据提交
+ */
 const submitForm = () => {
     if (dialogTitle.value === '新增用户') {
         addUserData(userForm.value).then(() => {
@@ -158,7 +179,7 @@ const submitForm = () => {
             initData();
         });
     } else {
-        updateUserDataById(userForm.value.id, userForm.value).then(() => {
+        updateUserByIdNoPassword(userForm.value.id, userForm.value).then(() => {
             ElMessage.success('更新成功');
             dialogVisible.value = false;
             initData();
@@ -166,19 +187,25 @@ const submitForm = () => {
     }
 };
 
-// 提交密码修改
+/**
+ * 提交密码修改
+ * 检查新密码和确认密码是否一致，如果一致，则调用API修改密码
+ */
 const submitPwdForm = () => {
     if (pwdForm.value.newPassword !== pwdForm.value.confirmPassword) {
         ElMessage.error('两次输入的密码不一致');
         return;
     }
 
-    updateUserDataById(pwdForm.value.id, pwdForm.value).then(() => {
+    updateUserPasswordByIdAdmin(pwdForm.value.id, pwdForm.value.newPassword).then(() => {
         ElMessage.success('密码修改成功');
         pwdDialogVisible.value = false;
     });
 };
 
+/**
+ * 组件挂载时初始化用户数据
+ */
 onMounted(() => {
     initData();
 });

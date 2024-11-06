@@ -32,8 +32,28 @@ export const deleteUserDataById = (id) => {
  * @param {object} user - 用户对象
  * @returns {Promise} 返回一个Promise对象
  */
-export const updateUserDataById = (id, user) => {
+export const updateUserByIdNoPassword = (id, user) => {
     return request.put(`/users/${id}`, user)
+}
+
+/**
+ * 根据ID更新用户密码 - 超级管理员
+ * @param {number} id - 用户ID
+ * @param {string} password - 用户对象
+ * @returns {Promise} 返回一个Promise对象
+ */
+export const updateUserPasswordByIdAdmin = (id, password) => {
+    return request.put(`/users/changePasswordAdmin/${id}`, { password: password })
+}
+
+/**
+ * 根据ID更新用户密码 - 普通用户
+ * @param {number} id - 用户ID
+ * @param {string} password - 用户对象
+ * @returns {Promise} 返回一个Promise对象
+ */
+export const updateUserPasswordByIdNoAdmin = (id, oldPassword, newPassword) => {
+    return request.put(`/users/changePasswordNoAdmin/${id}`, { oldPassword: oldPassword, newPassword: newPassword });
 }
 
 /**

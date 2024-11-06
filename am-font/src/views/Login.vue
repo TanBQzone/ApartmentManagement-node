@@ -34,12 +34,20 @@ import { ElMessage } from 'element-plus'
 
 const router = useRouter();
 
+/**
+ * 登录表单数据
+ * @type {Ref<{username: string, password: string, rememberMe: boolean}>}
+ */
 const loginForm = ref({
     username: "",
     password: "",
     rememberMe: false,
 })
 
+/**
+ * 处理登录操作
+ * @description 调用登录API，处理登录逻辑
+ */
 const handleLogin = () => {
     console.log("LOGIN!");
     login(loginForm.value).then(res => {
@@ -51,15 +59,19 @@ const handleLogin = () => {
             plain: true,
         })
         router.push('/home');
+    }).catch(err => {
+        console.error("登录失败:", err);
+        ElMessage({
+            message: err.data.message,
+            type: 'error',
+            plain: true,
+        })
     })
 }
 
 </script>
 
 <style lang="scss" scoped>
-* {
-    background-color: transparent;
-}
 .login-container {
     display: flex;
     justify-content: center;
@@ -75,14 +87,14 @@ const handleLogin = () => {
     width: 40vw;
     height: 50vh;
     margin: 0 auto;
-    background-color: var(--primary-color-bg);
-    border-radius: 20px;
+    background-color: #fff;
+    border-radius: 50px;
 
     .title {
         font-family: sans-serif;
         font-size: 2rem;
         line-height: 10rem;
-        font-weight: 900;
+        font-weight: 900;   
     }
 
     // 登录表单
