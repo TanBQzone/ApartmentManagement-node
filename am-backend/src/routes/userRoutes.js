@@ -1,3 +1,11 @@
+/*
+ * @Author: 谭必清
+ * @Date: 2024-11-06 23:56:35
+ * @LastEditors: 谭必清
+ * @LastEditTime: 2024-11-07 00:04:20
+ * @FilePath: /ApartmentManagement-node/am-backend/src/routes/userRoutes.js
+ * Copyright (c) 2024 by TanBQ., All Rights Reserved.
+ */
 /**
  * 用户路由
  * @module userRoutes
@@ -5,31 +13,37 @@
  */
 
 // 导入express模块
-const express = require('express');
+const express = require("express");
 // 导入用户控制器
-const userController = require('../controllers/userController');
+const userController = require("../controllers/userController");
 // 创建路由实例
 const router = express.Router();
 
 // 定义路由
 // 获取所有用户
-router.get('/users/listAll', userController.getAllUsers);
+router.get("/users/listAll", userController.getAllUsers);
 // 添加用户
-router.post('/users/addUser', userController.addUser);
+router.post("/users/addUser", userController.addUser);
 // 根据ID删除用户
-router.delete('/users/:id', userController.deleteUserById);
+router.delete("/users/:id", userController.deleteUserById);
 // 根据ID更新用户基本信息
-router.put('/users/:id', userController.updateUserByIdNoPassword);
+router.put("/users/:id", userController.updateUserByIdNoPassword);
 // 根据ID更新用户密码 - 管理员
-router.put('/users/changePasswordAdmin/:id', userController.updateUserPasswordByIdAdmin);
+router.put(
+  "/users/changePasswordAdmin/:id",
+  userController.updateUserPasswordByIdAdmin
+);
 // 根据ID更新用户密码 - 用户
-router.put('/users/changePasswordNoAdmin/:id', userController.updateUserPasswordByIdNoAdmin);
+router.put(
+  "/users/changePasswordNoAdmin/:id",
+  userController.updateUserPasswordByIdNoAdmin
+);
 // 根据ID获取用户信息
-router.get('/users/getUserByID/:id', userController.getUserById);
+router.get("/users/getUserByID/:id", userController.getUserById);
 // 根据姓名获取用户信息
-router.get('/users/getUserByName/:name', userController.getUserByName);
+router.get("/users/getUserByName/:name", userController.getUserByName);
 // 登录
-router.post('/login', userController.login);
+router.post("/login", userController.login);
 
 // 导出路由
 module.exports = router;

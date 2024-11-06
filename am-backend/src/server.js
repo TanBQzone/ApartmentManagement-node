@@ -1,6 +1,14 @@
-const express = require('express');
+/*
+ * @Author: 谭必清
+ * @Date: 2024-11-06 23:56:35
+ * @LastEditors: 谭必清
+ * @LastEditTime: 2024-11-07 00:04:26
+ * @FilePath: /ApartmentManagement-node/am-backend/src/server.js
+ * Copyright (c) 2024 by TanBQ., All Rights Reserved.
+ */
+const express = require("express");
 const app = express();
-const HOST = 'localhost'
+const HOST = "localhost";
 const PORT = 8080;
 const Version = "1.0.2";
 
@@ -8,8 +16,8 @@ const Version = "1.0.2";
 app.use(express.json());
 
 // 版本信息
-app.get('/', (req, res) => {
-    res.send(`
+app.get("/", (req, res) => {
+  res.send(`
         <div style="
             min-height: 100vh;
             display: flex;
@@ -46,15 +54,23 @@ app.get('/', (req, res) => {
 /**
  * 用户相关的路由
  */
-const userRoutes = require('./routes/userRoutes');
-app.use('/api', userRoutes)
+const userRoutes = require("./routes/userRoutes");
+app.use("/api", userRoutes);
 
 // 启动服务器
 app.listen(PORT, () => {
-    console.clear();
-    console.log();
-    console.log(`--------------------------------------------------------------------------`);
-    console.log(`\x1b[1m\x1b[34m欢迎使用公寓管理系统! 当前版本\x1b[1m\x1b[37m${Version}\x1b[0m`);
-    console.log(`\x1b[1m\x1b[32mServer is running on:\x1b[1m\x1b[33m http://${HOST}:${PORT}\x1b[0m`);
-    console.log(`--------------------------------------------------------------------------`);
+  console.clear();
+  console.log();
+  console.log(
+    `--------------------------------------------------------------------------`
+  );
+  console.log(
+    `\x1b[1m\x1b[34m欢迎使用公寓管理系统! 当前版本\x1b[1m\x1b[37m${Version}\x1b[0m`
+  );
+  console.log(
+    `\x1b[1m\x1b[32mServer is running on:\x1b[1m\x1b[33m http://${HOST}:${PORT}\x1b[0m`
+  );
+  console.log(
+    `--------------------------------------------------------------------------`
+  );
 });
