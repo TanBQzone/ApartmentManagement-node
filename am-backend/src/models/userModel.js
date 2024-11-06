@@ -14,7 +14,7 @@ const User = {
     getAllUsers: (callback) => {
         db.query('SELECT id, username, phone_number, apartment_id, created_at FROM users where apartment_id != 0', callback);
     },
-    
+
     /**
      * 添加用户
      * @function
@@ -25,7 +25,7 @@ const User = {
         const query = 'INSERT INTO users (username, password, phone_number, apartment_id) VALUES (?, ?, ?, ?)';
         db.query(query, [user.username, user.password, user.phone_number, user.apartment_id], callback);
     },
-    
+
     /**
      * 根据ID删除用户
      * @function
@@ -36,19 +36,31 @@ const User = {
         const query = 'DELETE FROM users WHERE id = ?';
         db.query(query, [id], callback);
     },
-    
+
     /**
-     * 根据ID更新用户信息
+     * 根据ID更新用户基本信息
      * @function
      * @param {number} id - 用户ID
      * @param {object} user - 用户对象
      * @param {function} callback - 回调函数
      */
-    updateUserById: (id, user, callback) => {
-        const query = 'UPDATE users SET username = ?, password = ?, phone_number = ?, apartment_id = ? WHERE id = ?';
-        db.query(query, [user.username, user.password, user.phone_number, user.apartment_id, id], callback);
+    updateUserByIdNoPassword: (id, user, callback) => {
+        const query = 'UPDATE users SET username = ?, phone_number = ?, apartment_id = ? WHERE id = ?';
+        db.query(query, [user.username, user.phone_number, user.apartment_id, id], callback);
     },
-    
+
+    /**
+     * 根据ID更新用户密码
+     * @function
+     * @param {number} id - 用户ID
+     * @param {string} password - 新密码
+     * @param {function} callback - 回调函数
+     */
+    updateUserPasswordById: (id, password, callback) => {
+        const query = "UPDATE users SET password = ? WHERE id = ?";
+        db.query(query, [password, id], callback);
+    },
+
     /**
      * 根据ID获取用户信息
      * @function
@@ -59,7 +71,7 @@ const User = {
         const query = 'SELECT * FROM users WHERE id = ?';
         db.query(query, [id], callback);
     },
-    
+
     /**
      * 根据姓名获取用户信息
      * @function

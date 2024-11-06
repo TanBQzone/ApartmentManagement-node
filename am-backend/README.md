@@ -184,7 +184,7 @@ const User = {
     getAllUsers: (callback) => {
         db.query('SELECT id, username, phone_number, apartment_id, created_at FROM users where apartment_id != 0', callback);
     },
-    
+
     /**
      * 添加用户
      * @function
@@ -195,7 +195,7 @@ const User = {
         const query = 'INSERT INTO users (username, password, phone_number, apartment_id) VALUES (?, ?, ?, ?)';
         db.query(query, [user.username, user.password, user.phone_number, user.apartment_id], callback);
     },
-    
+
     /**
      * 根据ID删除用户
      * @function
@@ -206,19 +206,31 @@ const User = {
         const query = 'DELETE FROM users WHERE id = ?';
         db.query(query, [id], callback);
     },
-    
+
     /**
-     * 根据ID更新用户信息
+     * 根据ID更新用户基本信息
      * @function
      * @param {number} id - 用户ID
      * @param {object} user - 用户对象
      * @param {function} callback - 回调函数
      */
-    updateUserById: (id, user, callback) => {
-        const query = 'UPDATE users SET username = ?, password = ?, phone_number = ?, apartment_id = ? WHERE id = ?';
-        db.query(query, [user.username, user.password, user.phone_number, user.apartment_id, id], callback);
+    updateUserByIdNoPassword: (id, user, callback) => {
+        const query = 'UPDATE users SET username = ?, phone_number = ?, apartment_id = ? WHERE id = ?';
+        db.query(query, [user.username, user.phone_number, user.apartment_id, id], callback);
     },
-    
+
+    /**
+     * 根据ID更新用户密码
+     * @function
+     * @param {number} id - 用户ID
+     * @param {string} password - 新密码
+     * @param {function} callback - 回调函数
+     */
+    updateUserPasswordById: (id, password, callback) => {
+        const query = "UPDATE users SET password = ? WHERE id = ?";
+        db.query(query, [password, id], callback);
+    },
+
     /**
      * 根据ID获取用户信息
      * @function
@@ -229,7 +241,7 @@ const User = {
         const query = 'SELECT * FROM users WHERE id = ?';
         db.query(query, [id], callback);
     },
-    
+
     /**
      * 根据姓名获取用户信息
      * @function
@@ -247,6 +259,34 @@ module.exports = User;
 ```
 
 ### 4.3 用户控制器 (`controllers/userController.js`)
+在写控制器前，需要把加密提取出来，我们就写一个utils
+
+```javascript
+/**
+ * 认证工具
+ * @module AuthUtils
+ * @description 这是一个认证工具，包括用户登录、密码加密和验证。
+ */
+const bcrypt = require('bcrypt');
+
+// 密码加密函数
+function hashPassword(password) {
+    // 第一个参数是密码，第二个参数是盐值的工作因子
+    return bcrypt.hash(password, 10);
+}
+
+// 密码验证函数
+function comparePassword(plainPassword, hashedPassword) {
+    // 第一个参数是明文密码，第二个是数据库中的哈希密码
+    return bcrypt.compare(plainPassword, hashedPassword);
+}
+
+module.exports = {
+    hashPassword,
+    comparePassword
+};
+```
+
 ```javascript
 /**
  * 用户控制器
@@ -255,7 +295,7 @@ module.exports = User;
  */
 
 const User = require('../models/userModel');
-const bcrypt = require('bcrypt');
+const { hashPassword, comparePassword } = require("../utils/authUtils")
 
 /**
  * 用户控制器对象
@@ -274,6 +314,7 @@ const userController = {
             res.json(results);
         });
     },
+
     /**
      * 添加用户
      * @function
@@ -289,7 +330,7 @@ const userController = {
         }
 
         try {
-            const hashedPassword = await bcrypt.hash(password, password.length);
+            const hashedPassword = await hashPassword(password);
             const newUser = { username, password: hashedPassword, phone_number, apartment_id };
 
             User.getUserByName(username, (err, result) => {
@@ -304,11 +345,11 @@ const userController = {
                 }
             })
 
-
         } catch (error) {
             return res.status(500).send({ message: '密码加密失败', error });
         }
     },
+
     /**
      * 根据ID删除用户
      * @function
@@ -323,25 +364,73 @@ const userController = {
             res.status(200).send({ message: '用户已删除' });
         });
     },
+
     /**
      * 根据ID更新用户信息
      * @function
      * @param {NextFunction} req - 请求对象
      * @param {Response} res - 响应对象
      */
-    updateUserById: async (req, res) => {
+    updateUserByIdNoPassword: async (req, res) => {
         const id = req.params.id;
-        const { username, password, phone_number, apartment_id } = req.body;
+        const { username, phone_number, apartment_id } = req.body;
 
-        const hashedPassword = await bcrypt.hash(password, password.length);
-        const updatedUser = { username, password: hashedPassword, phone_number, apartment_id };
+        const updatedUser = { username, phone_number, apartment_id };
 
-        User.updateUserById(id, updatedUser, (err, result) => {
+        User.updateUserByIdNoPassword(id, updatedUser, (err, result) => {
             if (err) return res.status(500).send(err);
             if (result.affectedRows === 0) return res.status(404).send({ message: '用户不存在' });
             res.status(200).send({ message: '用户信息已更新' });
         });
     },
+
+    /**
+     * 根据ID更新用户密码 - 管理员
+     * @function
+     * @param {NextFunction} req - 请求对象
+     * @param {Response} res - 响应对象
+     */
+    updateUserPasswordByIdAdmin: async (req, res) => {
+        const id = req.params.id;
+        const { password } = req.body;
+
+        const hashedPassword = await hashPassword(password);
+
+        User.updateUserPasswordById(id, hashedPassword, (err, result) => {
+            if (err) return res.status(500).send(err);
+            res.status(200).send({ message: '用户密码已更新' });
+        })
+    },
+
+    /**
+     * 根据ID更新用户密码 - 用户
+     * @function
+     * @param {NextFunction} req - 请求对象
+     * @param {Response} res - 响应对象
+     */
+    updateUserPasswordByIdNoAdmin: (req, res) => {
+        const id = req.params.id;
+        const { oldPassword, newPassword } = req.body;
+
+        // 首先获取当前用户的信息
+        User.getUserById(id, async (err, result) => {
+            let userPassword = result[0].password;
+
+            // 进行密码的比较
+            const isMatch = await comparePassword(oldPassword, userPassword);
+
+            if (!isMatch) {
+                res.status(404).send({ message: "旧密码不正确" });
+            } else {
+                // 更新
+                User.updateUserPasswordById(id, newPassword, (err, result) => {
+                    if (err) return res.status(500).send(err);
+                    res.status(200).send({ message: '用户密码已更新' });
+                });
+            }
+        });
+    },
+
     /**
      * 根据ID获取用户信息
      * @function
@@ -356,6 +445,7 @@ const userController = {
             res.json(result[0]);
         });
     },
+
     /**
      * 根据姓名获取用户信息
      * @function
@@ -370,6 +460,7 @@ const userController = {
             res.json(result[0]);
         });
     },
+
     /**
      * 登录
      * @function
@@ -387,18 +478,18 @@ const userController = {
         // 查找用户
         User.getUserByName(username, async (err, result) => {
             if (err) return res.status(500).send(err);
-            if (result.length === 0) return res.status(404).send({ message: '用户不存在' });
+            if (result.length === 0) return res.status(401).send({ message: '用户名或密码错误' });
 
             if (!result[0]) {
-                return res.status(404).send({ message: '用户或密码错误' });
+                return res.status(401).send({ message: '用户名或密码错误' });
             }
 
             // 比较密码
-            const isMatch = await bcrypt.compare(password, result[0].password);
+            const isMatch = await comparePassword(password, result[0].password);
             if (!isMatch) {
-                return res.status(401).send({ message: '用户或密码错误' });
+                return res.status(401).send({ message: '用户名或密码错误' });
             }
-            
+
             // 判断账号类别，如果公寓id是0，就是超级管理员
             const isAdmin = result[0].apartment_id === 0 ? true : false;
 
@@ -439,8 +530,12 @@ router.get('/users/listAll', userController.getAllUsers);
 router.post('/users/addUser', userController.addUser);
 // 根据ID删除用户
 router.delete('/users/:id', userController.deleteUserById);
-// 根据ID更新用户信息
-router.put('/users/:id', userController.updateUserById);
+// 根据ID更新用户基本信息
+router.put('/users/:id', userController.updateUserByIdNoPassword);
+// 根据ID更新用户密码 - 管理员
+router.put('/users/changePasswordAdmin/:id', userController.updateUserPasswordByIdAdmin);
+// 根据ID更新用户密码 - 用户
+router.put('/users/changePasswordNoAdmin/:id', userController.updateUserPasswordByIdNoAdmin);
 // 根据ID获取用户信息
 router.get('/users/getUserByID/:id', userController.getUserById);
 // 根据姓名获取用户信息
@@ -459,7 +554,7 @@ const express = require('express');
 const app = express();
 const HOST = 'localhost'
 const PORT = 8080;
-const Version = "1.0.1";
+const Version = "1.0.2";
 
 // 中间件：解析 JSON 请求体
 app.use(express.json());
@@ -482,7 +577,7 @@ app.get('/', (req, res) => {
                 font-size: 3rem;
                 font-weight: 900;
             ">
-                欢迎使用公寓管理系统! 当前版本1.0.1
+                欢迎使用公寓管理系统! 当前版本${Version}
             </p>
             <p><a 
                 href='http://${HOST}'
@@ -573,4 +668,5 @@ ignore: 指定要忽略的文件或目录。
 ```
 1. beta1.0.1 -- 24w45a || 创建项目结构以及登录接口的完成
 2. beta1.0.2 -- 24w45b || 修复了一些BUG，完善了部分逻辑
+2. beta1.0.3 -- 24w45c || 修复了一些BUG，修复用户信息修改的逻辑
 ```

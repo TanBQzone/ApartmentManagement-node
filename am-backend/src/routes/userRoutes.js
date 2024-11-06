@@ -18,8 +18,12 @@ router.get('/users/listAll', userController.getAllUsers);
 router.post('/users/addUser', userController.addUser);
 // 根据ID删除用户
 router.delete('/users/:id', userController.deleteUserById);
-// 根据ID更新用户信息
-router.put('/users/:id', userController.updateUserById);
+// 根据ID更新用户基本信息
+router.put('/users/:id', userController.updateUserByIdNoPassword);
+// 根据ID更新用户密码 - 管理员
+router.put('/users/changePasswordAdmin/:id', userController.updateUserPasswordByIdAdmin);
+// 根据ID更新用户密码 - 用户
+router.put('/users/changePasswordNoAdmin/:id', userController.updateUserPasswordByIdNoAdmin);
 // 根据ID获取用户信息
 router.get('/users/getUserByID/:id', userController.getUserById);
 // 根据姓名获取用户信息

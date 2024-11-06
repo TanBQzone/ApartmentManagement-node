@@ -5,7 +5,7 @@
  */
 
 const User = require('../models/userModel');
-const bcrypt = require('bcrypt');
+const { hashPassword, comparePassword } = require("../utils/authUtils")
 
 /**
  * 用户控制器对象
@@ -24,6 +24,7 @@ const userController = {
             res.json(results);
         });
     },
+
     /**
      * 添加用户
      * @function
@@ -39,7 +40,7 @@ const userController = {
         }
 
         try {
-            const hashedPassword = await bcrypt.hash(password, password.length);
+            const hashedPassword = await hashPassword(password);
             const newUser = { username, password: hashedPassword, phone_number, apartment_id };
 
             User.getUserByName(username, (err, result) => {
@@ -54,11 +55,11 @@ const userController = {
                 }
             })
 
-
         } catch (error) {
             return res.status(500).send({ message: '密码加密失败', error });
         }
     },
+
     /**
      * 根据ID删除用户
      * @function
@@ -73,25 +74,73 @@ const userController = {
             res.status(200).send({ message: '用户已删除' });
         });
     },
+
     /**
      * 根据ID更新用户信息
      * @function
      * @param {NextFunction} req - 请求对象
      * @param {Response} res - 响应对象
      */
-    updateUserById: async (req, res) => {
+    updateUserByIdNoPassword: async (req, res) => {
         const id = req.params.id;
-        const { username, password, phone_number, apartment_id } = req.body;
+        const { username, phone_number, apartment_id } = req.body;
 
-        const hashedPassword = await bcrypt.hash(password, password.length);
-        const updatedUser = { username, password: hashedPassword, phone_number, apartment_id };
+        const updatedUser = { username, phone_number, apartment_id };
 
-        User.updateUserById(id, updatedUser, (err, result) => {
+        User.updateUserByIdNoPassword(id, updatedUser, (err, result) => {
             if (err) return res.status(500).send(err);
             if (result.affectedRows === 0) return res.status(404).send({ message: '用户不存在' });
             res.status(200).send({ message: '用户信息已更新' });
         });
     },
+
+    /**
+     * 根据ID更新用户密码 - 管理员
+     * @function
+     * @param {NextFunction} req - 请求对象
+     * @param {Response} res - 响应对象
+     */
+    updateUserPasswordByIdAdmin: async (req, res) => {
+        const id = req.params.id;
+        const { password } = req.body;
+
+        const hashedPassword = await hashPassword(password);
+
+        User.updateUserPasswordById(id, hashedPassword, (err, result) => {
+            if (err) return res.status(500).send(err);
+            res.status(200).send({ message: '用户密码已更新' });
+        })
+    },
+
+    /**
+     * 根据ID更新用户密码 - 用户
+     * @function
+     * @param {NextFunction} req - 请求对象
+     * @param {Response} res - 响应对象
+     */
+    updateUserPasswordByIdNoAdmin: (req, res) => {
+        const id = req.params.id;
+        const { oldPassword, newPassword } = req.body;
+
+        // 首先获取当前用户的信息
+        User.getUserById(id, async (err, result) => {
+            let userPassword = result[0].password;
+
+            // 进行密码的比较
+            const isMatch = await comparePassword(oldPassword, userPassword);
+
+            if (!isMatch) {
+                res.status(404).send({ message: "旧密码不正确" });
+            } else {
+                // 更新
+                User.updateUserPasswordById(id, newPassword, (err, result) => {
+                    if (err) return res.status(500).send(err);
+                    res.status(200).send({ message: '用户密码已更新' });
+                });
+            }
+        });
+    },
+
     /**
      * 根据ID获取用户信息
      * @function
@@ -106,6 +155,7 @@ const userController = {
             res.json(result[0]);
         });
     },
+
     /**
      * 根据姓名获取用户信息
      * @function
@@ -120,6 +170,7 @@ const userController = {
             res.json(result[0]);
         });
     },
+
     /**
      * 登录
      * @function
@@ -137,18 +188,18 @@ const userController = {
         // 查找用户
         User.getUserByName(username, async (err, result) => {
             if (err) return res.status(500).send(err);
-            if (result.length === 0) return res.status(404).send({ message: '用户不存在' });
+            if (result.length === 0) return res.status(401).send({ message: '用户名或密码错误' });
 
             if (!result[0]) {
-                return res.status(404).send({ message: '用户或密码错误' });
+                return res.status(401).send({ message: '用户名或密码错误' });
             }
 
             // 比较密码
-            const isMatch = await bcrypt.compare(password, result[0].password);
+            const isMatch = await comparePassword(password, result[0].password);
             if (!isMatch) {
-                return res.status(401).send({ message: '用户或密码错误' });
+                return res.status(401).send({ message: '用户名或密码错误' });
             }
-            
+
             // 判断账号类别，如果公寓id是0，就是超级管理员
             const isAdmin = result[0].apartment_id === 0 ? true : false;
 

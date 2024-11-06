@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const HOST = 'localhost'
 const PORT = 8080;
-const Version = "1.0.1";
+const Version = "1.0.2";
 
 // 中间件：解析 JSON 请求体
 app.use(express.json());
@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
                 font-size: 3rem;
                 font-weight: 900;
             ">
-                欢迎使用公寓管理系统! 当前版本1.0.1
+                欢迎使用公寓管理系统! 当前版本${Version}
             </p>
             <p><a 
                 href='http://${HOST}'
