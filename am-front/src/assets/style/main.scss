@@ -1,3 +1,11 @@
+/*
+ * @Author: 谭必清
+ * @Date: 2024-11-06 23:56:35
+ * @LastEditors: 谭必清
+ * @LastEditTime: 2024-11-07 00:37:25
+ * @FilePath: /ApartmentManagement-node/am-front/src/assets/style/main.scss
+ * Copyright (c) 2020 - 2024 by TanBQ., All Rights Reserved.
+ */
 @use "./app" as *;
 @use "./el-ui" as *;
 @use "./element-plus" as *;
@@ -5,9 +13,9 @@
 @use "./variables" as *;
 
 :root {
-    --primary-color: #259c2d;
-    --primary-color-dark: #1b7121;
-    --primary-color-bg: #259c2d22;
-    --gray-color: #4a4a4a;
-    --border-color: #ddd;
+  --primary-color: #259c2d;
+  --primary-color-dark: #1b7121;
+  --primary-color-bg: #259c2d22;
+  --gray-color: #4a4a4a;
+  --border-color: #ddd;
 }

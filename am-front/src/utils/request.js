@@ -1,7 +1,15 @@
-import axios from 'axios';
+/*
+ * @Author: 谭必清
+ * @Date: 2024-11-06 23:56:35
+ * @LastEditors: 谭必清
+ * @LastEditTime: 2024-11-07 00:36:35
+ * @FilePath: /ApartmentManagement-node/am-front/src/utils/request.js
+ * Copyright (c) 2020 - 2024 by TanBQ., All Rights Reserved.
+ */
+import axios from "axios";
 
 const request = axios.create({
-  baseURL: '/api',
+  baseURL: "/api",
   timeout: 5000,
 });
 
@@ -30,6 +38,3 @@ request.interceptors.response.use(
 );
 
 export default request;
-
-
-

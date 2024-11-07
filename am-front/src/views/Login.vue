@@ -1,3 +1,11 @@
+<!--
+ * @Author: 谭必清
+ * @Date: 2024-11-06 23:56:35
+ * @LastEditors: 谭必清
+ * @LastEditTime: 2024-11-07 21:13:59
+ * @FilePath: /ApartmentManagement-node/am-front/src/views/Login.vue
+ * Copyright (c) 2020 - 2024 by TanBQ., All Rights Reserved.
+-->
 <template>
     <div class="login-container">
         <div class="title">欢迎使用在线公寓管理系统</div>
@@ -57,7 +65,7 @@ const handleLogin = () => {
             message: res.message,
             type: 'success',
             plain: true,
-        })
+        });
         router.push('/home');
     }).catch(err => {
         console.error("登录失败:", err);
@@ -65,7 +73,7 @@ const handleLogin = () => {
             message: err.data.message,
             type: 'error',
             plain: true,
-        })
+        });
     })
 }
 
@@ -94,7 +102,7 @@ const handleLogin = () => {
         font-family: sans-serif;
         font-size: 2rem;
         line-height: 10rem;
-        font-weight: 900;   
+        font-weight: 900;
     }
 
     // 登录表单

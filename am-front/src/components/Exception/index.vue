@@ -1,3 +1,11 @@
+<!--
+ * @Author: 谭必清
+ * @Date: 2024-11-06 23:56:35
+ * @LastEditors: 谭必清
+ * @LastEditTime: 2024-11-07 00:36:43
+ * @FilePath: /ApartmentManagement-node/am-front/src/components/Exception/index.vue
+ * Copyright (c) 2020 - 2024 by TanBQ., All Rights Reserved.
+-->
 <template>
     <div class="page-content state-page">
         <div class="tips">
@@ -28,6 +36,7 @@ const backHome = () => {
 
 <style lang="scss" scoped>
 @use "@/assets/style/variables" as *;
+
 .state-page {
     display: flex;
     height: 100vh;

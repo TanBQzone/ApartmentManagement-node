@@ -1,3 +1,11 @@
+<!--
+ * @Author: 谭必清
+ * @Date: 2024-11-06 23:56:35
+ * @LastEditors: 谭必清
+ * @LastEditTime: 2024-11-07 00:35:51
+ * @FilePath: /ApartmentManagement-node/am-front/src/views/Home.vue
+ * Copyright (c) 2020 - 2024 by TanBQ., All Rights Reserved.
+-->
 <template>
     <div>
         <el-header>
@@ -24,7 +32,7 @@ import Footer from '@/views/layout/Footer.vue'
 <style lang="scss" scoped>
 .el-main {
     margin: 20px;
-    min-height: calc(100vh - 60px - 60px);
+    min-height: calc(100vh - 60px - 80px);
     border-radius: 20px;
     background-color: #f5f5f5;
 }
