@@ -2,14 +2,14 @@
  * @Author: 谭必清
  * @Date: 2024-11-06 23:56:35
  * @LastEditors: 谭必清
- * @LastEditTime: 2024-11-07 00:03:46
+ * @LastEditTime: 2024-11-07 00:16:31
  * @FilePath: /ApartmentManagement-node/am-backend/src/config/db.js
  * Copyright (c) 2024 by TanBQ., All Rights Reserved.
  */
 /**
  * 链接数据库
  * account: root
- * password: root
+ * password: admin123 | root
  * host: localhost
  **/
 const SUCCESSMSG = "成功链接数据库!";
@@ -19,7 +19,7 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   host: "localhost",
   user: "root",
-  password: "123456",
+  password: "admin@123",
   database: "am",
   waitForConnections: true, // 等待连接池连接
   connectTimeout: 10000, // 设置连接超时时间

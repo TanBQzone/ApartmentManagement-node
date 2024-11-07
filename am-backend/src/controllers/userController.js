@@ -2,7 +2,7 @@
  * @Author: 谭必清
  * @Date: 2024-11-06 23:56:35
  * @LastEditors: 谭必清
- * @LastEditTime: 2024-11-07 00:04:06
+ * @LastEditTime: 2024-11-07 21:34:41
  * @FilePath: /ApartmentManagement-node/am-backend/src/controllers/userController.js
  * Copyright (c) 2024 by TanBQ., All Rights Reserved.
  */
@@ -137,7 +137,7 @@ const userController = {
     const { oldPassword, newPassword } = req.body;
 
     // 首先获取当前用户的信息
-    User.getUserById(id, async (err, result) => {
+    User.getUserByIdHasPwd(id, async (err, result) => {
       let userPassword = result[0].password;
 
       // 进行密码的比较
@@ -147,7 +147,8 @@ const userController = {
         res.status(404).send({ message: "旧密码不正确" });
       } else {
         // 更新
-        User.updateUserPasswordById(id, newPassword, (err, result) => {
+        const hashedPassword = await hashPassword(newPassword);
+        User.updateUserPasswordById(id, hashedPassword, (err, result) => {
           if (err) return res.status(500).send(err);
           res.status(200).send({ message: "用户密码已更新" });
         });
@@ -202,7 +203,7 @@ const userController = {
     }
 
     // 查找用户
-    User.getUserByName(username, async (err, result) => {
+    User.getUserByNameHasPwd(username, async (err, result) => {
       if (err) return res.status(500).send(err);
       if (result.length === 0)
         return res.status(401).send({ message: "用户名或密码错误" });

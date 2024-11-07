@@ -2,7 +2,7 @@
  * @Author: 谭必清
  * @Date: 2024-11-06 23:56:35
  * @LastEditors: 谭必清
- * @LastEditTime: 2024-11-07 00:04:12
+ * @LastEditTime: 2024-11-07 21:11:23
  * @FilePath: /ApartmentManagement-node/am-backend/src/models/userModel.js
  * Copyright (c) 2024 by TanBQ., All Rights Reserved.
  */
@@ -89,6 +89,18 @@ const User = {
    * @param {function} callback - 回调函数
    */
   getUserById: (id, callback) => {
+    const query =
+      "SELECT id, username, phone_number, apartment_id, created_at FROM users WHERE id = ?";
+    db.query(query, [id], callback);
+  },
+
+  /**
+   * 根据ID获取用户信息(包含密码)
+   * @function
+   * @param {number} id - 用户ID
+   * @param {function} callback - 回调函数
+   */
+  getUserByIdHasPwd: (id, callback) => {
     const query = "SELECT * FROM users WHERE id = ?";
     db.query(query, [id], callback);
   },
@@ -100,6 +112,18 @@ const User = {
    * @param {function} callback - 回调函数
    */
   getUserByName: (username, callback) => {
+    const query =
+      "SELECT id, username, phone_number, apartment_id, created_at FROM users WHERE username = ?";
+    db.query(query, [username], callback);
+  },
+
+  /**
+   * 根据姓名获取用户信息(包含密码)
+   * @function
+   * @param {number} username - 用户姓名
+   * @param {function} callback - 回调函数
+   */
+  getUserByNameHasPwd: (username, callback) => {
     const query = "SELECT * FROM users WHERE username = ?";
     db.query(query, [username], callback);
   },

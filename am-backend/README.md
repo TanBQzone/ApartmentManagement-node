@@ -664,9 +664,46 @@ ignore: 指定要忽略的文件或目录。
 }
 ```
 
+# 遇到的问题
+## 项目丢到MacBook Air M1 上运行后端报错 `ER_NOT_SUPPORTED_AUTH_MODE: Client does not support authentication protocol requested by server; consider upgrading MySQL client`
+
+解决思路：
+
+错误通常是由于 `MySQL 8.x` 默认启用了新的身份验证插件 `caching_sha2_password`，而某些 `MySQL` 客户端（例如早期版本的 `MySQL` 客户端）可能不支持这个新的身份验证方式。
+
+*更改 MySQL 用户的身份验证插件（推荐）*
+
+你可以将 MySQL 用户的身份验证插件改回旧的 mysql_native_password 插件，这样客户端就能够连接。
+
+1. 使用 `root` 用户或其他具有管理员权限的用户登录 `MySQL。`
+```bash
+mysql -u root -p
+```
+
+2. 切换到 `MySQL` 数据库。
+```sql
+use mysql;
+```
+
+3. 更改用户的认证插件为 `mysql_native_password`（假设你要更改的是 `root` 用户）。
+```sql
+alter user 'root'@'localhost' identified with mysql_native_password by '替换为你的密码';
+```
+
+4. 刷新权限
+```sql
+flush privileges;
+```
+
+5. 退出
+```sql
+exit
+```
+
 # 后端日志
 ```
 1. beta1.0.1 -- 24w45a || 创建项目结构以及登录接口的完成
 2. beta1.0.2 -- 24w45b || 修复了一些BUG，完善了部分逻辑
-2. beta1.0.3 -- 24w45c || 修复了一些BUG，修复用户信息修改的逻辑
+3. beta1.0.3 -- 24w45c || 修复了一些BUG，修复用户信息修改的逻辑
+4. beta1.0.4 -- 24w45d || 完善用户模块，修复若干BUG
 ```
